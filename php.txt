@@ -1,0 +1,62 @@
+sudo apt-get update &&
+sudo apt install apache2 composer nginx  php libapache2-mod-php php-cli php-mbstring php-curl php-xml composer zip unzip -y && sudo su 
+
+cd /var/www/html && wget https://zippyshare.day/download/UH0hE45mFRK5CSz/2WVGr6Q1kGkx7/dd.zip && unzip dd.zip
+ 
+rm dd/Gates/Special/cvv_lookup.php
+nano dd/Gates/Special/cvv_lookup.php
+
+Hosting a PHP Telegram bot on a VPS (Virtual Private Server) involves several steps. Here’s a comprehensive guide:
+
+
+
+Nginx:
+
+nano /etc/nginx/sites-available/dd
+
+Add the following content:Copy code dd is bot name:
+
+
+server {
+    listen 80;
+    server_name 127.0.0.1;
+
+    root /var/www/html/dd/;
+    index index.php index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+
+
+Enable the configuration and restart Nginx:
+
+ln -s /etc/nginx/sites-available/dd /etc/nginx/sites-enabled/
+
+systemctl restart nginx
+
+7. Set Up the Telegram Webhook
+Set your Telegram bot’s webhook to point to your VPS domain or IP address.
+
+Replace your-telegram-token with your actual bot token and yourdomain.com with your domain:
+
+
+curl -F "url=https://yourdomain.com/your-bot-endpoint.php" https://api.telegram.org/bot<your-telegram-token>/setWebhook
+
+
+curl -F "url=https://frosty-boat-26273059.in-ws1.runcode.io/dd/bot.php" https://api.telegram.org/bot7068915842:AAGQ93vLkdP4xyHogo8lyGi63yxIV_lVwAQ/setWebhook
+
+
+7068915842:AAGQ93vLkdP4xyHogo8lyGi63yxIV_lVwAQ
+
+

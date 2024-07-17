@@ -1,0 +1,48 @@
+curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list >/dev/null && sudo apt update && sudo apt install ngrok xrdp -y && sudo service xrdp restart && sudo /usr/local/bin/ngrok config add-authtoken 2hiq2KDpR3an1e47n1YDWB7RUu2_5zLsxGjRkzokLAgtHLkmw && sudo /usr/local/bin/ngrok tcp 3389
+
+
+curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list >/dev/null && sudo apt update && sudo apt install ngrok ssh -y && sudo /usr/local/bin/ngrok config add-authtoken 2hiq2KDpR3an1e47n1YDWB7RUu2_5zLsxGjRkzokLAgtHLkmw && sudo /usr/local/bin/ngrok tcp 22
+
+sudo passwd root
+sudo passwd ubuntu
+sudo su
+
+
+sudo nano /etc/ssh/sshd_config
+
+
+Find the line that says PasswordAuthentication and set it to yes. If the line is commented out (prefixed with #), remove the # and set it to yes:
+
+PasswordAuthentication yes
+
+Step: Restart the SSH Service:
+
+
+sudo systemctl restart ssh
+
+
+Step 1: Create a Script to Run ngrok and Capture Output
+
+
+sudo nano /usr/local/bin/start_ngrok.sh
+
+#!/bin/bash
+# Create the directory if it doesn't exist
+sudo mkdir -p /var/www/html/dd
+# Create the file if it doesn't exist
+sudo touch /var/www/html/dd/ssh.txt
+# Run ngrok and capture the output
+sudo ngrok tcp 22 --log=stdout > /var/www/html/dd/ssh.txt &
+
+
+Step 2:Make the Script Executable:
+
+sudo chmod +x /usr/local/bin/start_ngrok.sh
+
+
+Step 3:Open the Crontab Editor:
+
+
+crontab -e
+
+@reboot sleep 30 && /usr/local/bin/start_ngrok.sh
